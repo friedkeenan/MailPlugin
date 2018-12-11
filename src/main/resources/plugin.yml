@@ -1,3 +1,7 @@
 name: MailPlugin
 main: friedkeenan.mailplugin.MailPlugin
 version: 0.0.1-SNAPSHOT
+commands:
+  env:
+    description: Gives the player an envelope
+    usage: /env

@@ -1,6 +1,8 @@
 package friedkeenan.mailplugin;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,8 +20,15 @@ public class MailPlugin extends JavaPlugin implements Listener{
 	@EventHandler
 	public void openEnvelope(PlayerInteractEvent e) {
 		Player p=e.getPlayer();
-		if(e.getAction()==Action.RIGHT_CLICK_AIR || e.getAction()==Action.RIGHT_CLICK_BLOCK) {
+		if(Envelope.isEnvelope(e.getItem()) && (e.getAction()==Action.RIGHT_CLICK_AIR || e.getAction()==Action.RIGHT_CLICK_BLOCK)) {
 			p.sendMessage("Right click");
 		}
+	}
+	@Override
+	public boolean onCommand(CommandSender sender,Command cmd,String label,String[] args) {
+		if(sender instanceof Player && cmd.getName().equalsIgnoreCase("env")) {
+			new Envelope((Player)sender);
+		}
+		return false;
 	}
 }
