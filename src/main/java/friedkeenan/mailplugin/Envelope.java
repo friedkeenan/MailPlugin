@@ -22,13 +22,17 @@ public class Envelope{
 			throw new Exception("ItemStack is not an envelope");
 		}
 		item=env;
-		contents=Bukkit.createInventory(null, 9);
-		contents.addItem(new ItemStack(Material.STAINED_GLASS_PANE,1,(short)13));
+		contents=Bukkit.createInventory(null,9,"Envelope");
+		ItemStack accept=new ItemStack(Material.STAINED_GLASS_PANE,1,(short)13);
+		ItemMeta meta=accept.getItemMeta();
+		meta.setLocalizedName("Seal Envelope");
+		accept.setItemMeta(meta);
+		contents.addItem(accept);
 	}
 	static void giveEnvelope(Player p){
 		ItemStack stack=new ItemStack(Material.PAPER);
 		ItemMeta meta=stack.getItemMeta();
-		meta.setDisplayName("Unsealed Envelope");
+		meta.setLocalizedName("Unsealed Envelope");
 		List<String> lore=new ArrayList<String>();
 		lore.add("Envelope");
 		lore.add("Unsealed");
@@ -58,6 +62,15 @@ public class Envelope{
 	}
 	boolean isSealed() {
 		return item.getItemMeta().getLore().get(1)=="Sealed";
+	}
+	ItemStack setSealed(boolean sealed) {
+		ItemMeta meta=item.getItemMeta();
+		List<String> lore=meta.getLore();
+		lore.set(1,sealed?"Sealed":"Unsealed");
+		meta.setLore(lore);
+		meta.setLocalizedName(sealed?"Sealed Envelope":"Unsealed Envelope");
+		item.setItemMeta(meta);
+		return item;
 	}
 	void open(Player p) {
 		p.openInventory(contents);
