@@ -11,10 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class Envelope{
+	private static int lastID=-1;
 	private ItemStack item;
 	private Inventory contents;
 	Envelope(ItemStack env) throws Exception{
-		if(!Envelope.isEnvelope(env)) {
+		if(!isEnvelope(env)) {
 			throw new Exception("ItemStack is not an envelope");
 		}
 		item=env;
@@ -28,6 +29,7 @@ public class Envelope{
 		List<String> lore=new ArrayList<String>();
 		lore.add("Envelope");
 		lore.add("Unsealed");
+		lore.add(Integer.toString(++lastID));
 		meta.setLore(lore);
 		stack.setItemMeta(meta);
 		p.getInventory().addItem(stack);
@@ -40,5 +42,8 @@ public class Envelope{
 	}
 	void open(Player p) {
 		p.openInventory(contents);
+	}
+	boolean itemEquals(ItemStack stack) {
+		return stack.hashCode()==item.hashCode();
 	}
 }

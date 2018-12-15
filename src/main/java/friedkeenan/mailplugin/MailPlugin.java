@@ -11,10 +11,25 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MailPlugin extends JavaPlugin implements Listener{
-	List<Envelope> envelopes=new ArrayList<Envelope>();
+	private List<Envelope> envelopes=new ArrayList<Envelope>();
+	Envelope findEnvelope(ItemStack stack) {
+		for(Envelope e:envelopes) {
+			if(e.itemEquals(stack)){
+				return e;
+			}
+		}
+		try {
+			Envelope env=new Envelope(stack);
+			envelopes.add(env);
+			return env;
+		}catch(Exception exc) {
+			return null;
+		}
+	}
 	@Override
 	public void onDisable() {}
 	@Override
@@ -24,12 +39,15 @@ public class MailPlugin extends JavaPlugin implements Listener{
 	@EventHandler
 	public void openEnvelope(PlayerInteractEvent e) {
 		Player p=e.getPlayer();
+		ItemStack stack=e.getItem();
 		if(e.getAction()==Action.RIGHT_CLICK_AIR || e.getAction()==Action.RIGHT_CLICK_BLOCK) {
-			if(e.getItem().getAmount()==1 && Envelope.isEnvelope(e.getItem())) {
+			if(stack.getAmount()==1 && Envelope.isEnvelope(stack)) {
 				try {
-					Envelope env=new Envelope(e.getItem());
+					Envelope env=findEnvelope(stack);
 					env.open(p);
-				}catch(Exception exc) {}
+				}catch(Exception exc) {
+					p.sendMessage(exc.toString());
+				}
 			}
 		}
 	}
