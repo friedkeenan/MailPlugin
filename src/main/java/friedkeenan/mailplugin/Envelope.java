@@ -1,7 +1,9 @@
 package friedkeenan.mailplugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class Envelope{
 	private static int lastID=-1;
+	private static Map<Integer,Envelope> envelopes=new HashMap<Integer,Envelope>();
 	private ItemStack item;
 	private Inventory contents;
 	Envelope(ItemStack env) throws Exception{
@@ -37,13 +40,26 @@ public class Envelope{
 	static boolean isEnvelope(ItemStack stack) {
 		return stack.getType()==Material.PAPER && stack.getItemMeta().getLore().get(0)=="Envelope";
 	}
+	static int getID(ItemStack stack) {
+		return Integer.parseInt(stack.getItemMeta().getLore().get(2));
+	}
+	static Envelope getEnvelope(ItemStack stack) {
+		int id=getID(stack);
+		if(!envelopes.containsKey(id)) {
+			try {
+				Envelope env=new Envelope(stack);
+				envelopes.put(id, env);
+				return env;
+			}catch(Exception exc) {
+				return null;
+			}
+		}
+		return envelopes.get(id);
+	}
 	boolean isSealed() {
 		return item.getItemMeta().getLore().get(1)=="Sealed";
 	}
 	void open(Player p) {
 		p.openInventory(contents);
-	}
-	boolean itemEquals(ItemStack stack) {
-		return stack.hashCode()==item.hashCode();
 	}
 }
